@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Yin.h"
 #include "Weapon.generated.h"
 
 class USphereComponent;
@@ -28,11 +29,16 @@ public:
 public:
 	void SetSphereCollisionState(bool state);
 
+	void SetOwnChar(AYin* Char);
+
 public:
 	UFUNCTION()
 	void OnSphereComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	USphereComponent* Sphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character")
+	AYin* OwnChar;
 };

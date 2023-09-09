@@ -26,8 +26,6 @@ AYin::AYin()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
-
-
 }
 
 void AYin::BeginPlay()
@@ -43,7 +41,7 @@ void AYin::BeginPlay()
 
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
 
-
+	Weapon->OwnChar = this;
 }
 
 void AYin::Tick(float DeltaTime)
@@ -68,6 +66,12 @@ void AYin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Started, this, &AYin::Attack);
 	}
+}
+
+float AYin::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+
+	return 0.0f;
 }
 
 void AYin::Look(const FInputActionValue& Value)
@@ -132,23 +136,19 @@ void AYin::AttackSwitch()
 	{
 	case 0:
 		AttackCount = 1;
-		PlayAnimMontage(FirstAttackMontage);	
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString::Printf(TEXT("%f"), AttackCount));
+		PlayAnimMontage(FirstAttackMontage);
 		break;
 	case 1:
 		AttackCount = 2;
-		PlayAnimMontage(SecondAttackMontage);	
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString::Printf(TEXT("%f"), AttackCount));
+		PlayAnimMontage(SecondAttackMontage);
 		break;
 	case 2:
 		AttackCount = 3;
 		PlayAnimMontage(ThirdAttackMontage);
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString::Printf(TEXT("%f"), AttackCount));
 		break;
 	case 3:
 		AttackCount = 0;
 		PlayAnimMontage(FourthAttackMontage);
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString::Printf(TEXT("%f"), AttackCount));
 		break;
 	}
 }
