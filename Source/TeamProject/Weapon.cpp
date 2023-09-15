@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "Components/SphereComponent.h"
 #include "Yin.h"
+#include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -57,19 +58,15 @@ void AWeapon::OnSphereComponentBeginOverlap(AActor* OverlappedActor, AActor* Oth
 	//Interface로 구현하면 더 좋음
 	//지금은 Yin이지만 Enemy클래스로 바꿔야함.
 
-	//AYin* HitChar;
-
+	AEnemy* HitChar = Cast<AEnemy>(OtherActor);
 	
 	////ApplyDamage로 데미지를 넘기면
 	////상대는 TakeDamage를 override했다면 데미지를 받는다.
-	//UGameplayStatics::ApplyDamage(HitChar, OwnChar->Damage, OwnChar->GetController(), this, UDamageType::StaticClass());
+	UGameplayStatics::ApplyDamage(HitChar, OwnChar->Damage, OwnChar->GetController(), this, UDamageType::StaticClass());
 	if (OtherActor == nullptr)
 		return;
 
-	if (OwnChar != OtherActor) 
-	{
-		FString ActorName1 = OtherActor->GetName();
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorName1);
-	}
+	FString ActorName1 = OtherActor->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("ApplyDamageActor = %s"), *ActorName1);
 }
 

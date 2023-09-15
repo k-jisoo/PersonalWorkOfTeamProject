@@ -10,11 +10,24 @@ void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *(this->GetName()));
+
 	UEnhancedInputLocalPlayerSubsystem* LocalPlayerSystem
-		= ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+		= ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(this->GetLocalPlayer());
 
 	if (LocalPlayerSystem && DefaultMappingContext)
 	{
 		LocalPlayerSystem->AddMappingContext(DefaultMappingContext, 0);
 	}
+	else
+	{
+		if (!LocalPlayerSystem)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Not Found LocalPlayerSystem"));
+		}
+	}
+
+
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 }

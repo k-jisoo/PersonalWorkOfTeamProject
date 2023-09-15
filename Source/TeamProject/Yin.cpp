@@ -26,6 +26,8 @@ AYin::AYin()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	Damage = 10;
 }
 
 void AYin::BeginPlay()
