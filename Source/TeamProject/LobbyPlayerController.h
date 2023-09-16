@@ -13,7 +13,7 @@ UCLASS()
 class TEAMPROJECT_API ALobbyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void BeginPlay() override;
 
@@ -33,6 +33,4 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	UUserWidget* LobbyWidget;
-
-
 };

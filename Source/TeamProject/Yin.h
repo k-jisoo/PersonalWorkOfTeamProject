@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Engine/DataTable.h"
 #include "InputActionValue.h"
 #include "Yin.generated.h"
 
@@ -14,6 +15,49 @@ class UAnimMontage;
 class USphereComponent;
 class UStaticMeshComponent;
 class AWeapon;
+
+USTRUCT(BlueprintType)
+struct FST_Character : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* SkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimBlueprint* AnimBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* FirstAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* SecondAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* ThirdAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* FourthAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Armor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleRadius;
+};
 
 UCLASS()
 class TEAMPROJECT_API AYin : public ACharacter
@@ -45,6 +89,10 @@ public:
 
 	void Attack(const FInputActionValue& Value);
 
+	UFUNCTION(Server, Reliable)
+	void ReqAttack();
+	
+	UFUNCTION(NetMulticast, Reliable)
 	void AttackSwitch();
 
 	void ComboAttackSave();
@@ -86,9 +134,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UAnimMontage* FourthAttackMontage;
 	
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	AWeapon* Weapon;
+
+	UPROPERTY()
+	FST_Character* ST_Character;
 
 public:
 	bool IsAttacking;

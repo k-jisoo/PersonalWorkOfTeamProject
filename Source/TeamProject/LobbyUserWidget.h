@@ -26,6 +26,26 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UButton* StartGameButton;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* ReadyButton;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* CancelReadyButton;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* YinButton;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* TerraButton;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* Temp1Button;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UButton* Temp2Button;
+
+
 	UFUNCTION()
 	void OnChangedText(const FText& Text);
 
@@ -35,6 +55,14 @@ public:
 	UFUNCTION()
 	void StartGame();
 
+	UFUNCTION()
+	void Ready();
+
+	UFUNCTION()
+	void CancelReady();
+
+	UFUNCTION()
+	void OnButtonClicked(int num);
 
 	void AddMessage(FText const& Message);
 

@@ -118,6 +118,11 @@ void AYin::StopJump(const FInputActionValue& Value)
 
 void AYin::Attack(const FInputActionValue& Value)
 {
+	ReqAttack();
+}
+
+void AYin::ReqAttack_Implementation()
+{
 	if (!IsInputPossible)
 		return;
 
@@ -132,7 +137,7 @@ void AYin::Attack(const FInputActionValue& Value)
 	AttackSwitch();
 }
 
-void AYin::AttackSwitch()
+void AYin::AttackSwitch_Implementation()
 {
 	switch (AttackCount)
 	{

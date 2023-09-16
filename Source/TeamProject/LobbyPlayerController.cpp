@@ -9,8 +9,6 @@ void ALobbyPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    UE_LOG(LogTemp, Warning, TEXT("%s"), *(this->GetName()));
-
     APlayerController* myPlayerController = GetWorld()->GetFirstPlayerController();
 
     if (!myPlayerController)
@@ -21,6 +19,7 @@ void ALobbyPlayerController::BeginPlay()
     
     if (!LobbyWidgetClass)
         return;
+
     LobbyWidget = CreateWidget<UUserWidget>(GetWorld(), LobbyWidgetClass);
     LobbyWidget->AddToViewport();
     
@@ -38,15 +37,13 @@ bool ALobbyPlayerController::C2S_SendMessage_Validate(FText const& Message)
 
 void ALobbyPlayerController::C2S_SendMessage_Implementation(FText const& Message)
 {
-    UE_LOG(LogTemp, Warning, TEXT("server : %s"), *Message.ToString());
-    //Find All PC
-    for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+    for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; Iter++)
     {
         ALobbyPlayerController* PC = Cast<ALobbyPlayerController>(*Iter);
-        if (PC)
-        {
-            PC->S2C_SendMessage(Message);
-        }
+        if (!PC)
+            return;
+
+        PC->S2C_SendMessage(Message);
     }
 
 }
@@ -55,8 +52,9 @@ void ALobbyPlayerController::S2C_SendMessage_Implementation(FText const& Message
 {
     //UI 메세지 추가
     ULobbyUserWidget* Widget = Cast<ULobbyUserWidget>(LobbyWidget);
-    if (Widget)
-    {
-        Widget->AddMessage(Message);
-    }
+    if (!Widget)
+        return;
+
+    Widget->AddMessage(Message);
 }
+

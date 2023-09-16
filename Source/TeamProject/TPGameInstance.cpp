@@ -3,3 +3,7 @@
 
 #include "TPGameInstance.h"
 
+FST_Character* UTPGameInstance::GetCharacterRowData(FName name)
+{
+	return CharacterData->FindRow<FST_Character>(name, TEXT(""));
+}

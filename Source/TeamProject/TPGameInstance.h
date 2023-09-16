@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Yin.h"
 #include "TPGameInstance.generated.h"
 
 /**
@@ -17,4 +18,11 @@ class TEAMPROJECT_API UTPGameInstance : public UGameInstance
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FString Username;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* CharacterData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FST_Character* GetCharacterRowData(FName name);
+
 };

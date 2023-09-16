@@ -9,8 +9,6 @@ void AEntryPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    UE_LOG(LogTemp, Warning, TEXT("%s"), *(this->GetName()));
-
     APlayerController* myPlayerController = GetWorld()->GetFirstPlayerController();
 
     if (!myPlayerController)
