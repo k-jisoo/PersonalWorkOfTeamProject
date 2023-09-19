@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 class UAnimMontage;
+class UAnimBlueprint;
 class USphereComponent;
 class UStaticMeshComponent;
 class AWeapon;
@@ -137,7 +138,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	AWeapon* Weapon;
 
-	UPROPERTY()
 	FST_Character* ST_Character;
 
 public:

@@ -64,6 +64,18 @@ public:
 	UFUNCTION()
 	void OnButtonClicked(int num);
 
+	UFUNCTION()
+	void OnYinButtonClicked();
+
+	UFUNCTION()
+	void OnTerraButtonClicked();
+
+	UFUNCTION()
+	void OnTemp1ButtonClicked();
+
+	UFUNCTION()
+	void OnTemp2ButtonClicked();
+
 	void AddMessage(FText const& Message);
 
 };

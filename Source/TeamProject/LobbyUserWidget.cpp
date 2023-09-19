@@ -60,13 +60,16 @@ void ULobbyUserWidget::NativeConstruct()
 	Temp1Button = Cast<UButton>(GetWidgetFromName(TEXT("Temp1")));
 	Temp2Button = Cast<UButton>(GetWidgetFromName(TEXT("Temp2")));
 
+
 	if (!YinButton || !TerraButton || !Temp1Button || !Temp2Button)
+	{
 		return;
-	
-	YinButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnButtonClicked, 0); // 0 represents Image1
-	TerraButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnButtonClicked, 1); // 1 represents Image2
-	Temp1Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnButtonClicked, 2); // 2 represents Image3
-	Temp2Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnButtonClicked, 3); // 3 represents Image4
+	}
+
+	YinButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnYinButtonClicked);
+	TerraButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTerraButtonClicked); 
+	Temp1Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTemp1ButtonClicked);
+	Temp2Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTemp2ButtonClicked);
 		
 }
 
@@ -91,7 +94,6 @@ void ULobbyUserWidget::OnCommitedText(const FText& Text, ETextCommit::Type Commi
 			if (!GI)
 				return;
 
-			UE_LOG(LogTemp, Warning, TEXT("Send Message"));
 			{
 				FString Temp = FString::Printf(TEXT("%s : %s"), *GI->Username, *Text.ToString());
 				//Client -> Server·Î Àü¼Û
@@ -126,6 +128,8 @@ void ULobbyUserWidget::CancelReady()
 
 void ULobbyUserWidget::OnButtonClicked(int num)
 {
+
+
 	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
 	if (!GI)
 		return;
@@ -141,13 +145,33 @@ void ULobbyUserWidget::OnButtonClicked(int num)
 		break;
 
 	case 2:
-		GI->GetCharacterRowData(FName("Temp"));
+		GI->GetCharacterRowData(FName("Temp1"));
 		break;
 
 	case 3:
-		GI->GetCharacterRowData(FName("Temp"));
+		GI->GetCharacterRowData(FName("Temp1"));
 		break;
 	}
+}
+
+void ULobbyUserWidget::OnYinButtonClicked()
+{
+	OnButtonClicked(0);
+}
+
+void ULobbyUserWidget::OnTerraButtonClicked()
+{
+	OnButtonClicked(1);
+}
+
+void ULobbyUserWidget::OnTemp1ButtonClicked()
+{
+	OnButtonClicked(2);
+}
+
+void ULobbyUserWidget::OnTemp2ButtonClicked()
+{
+	OnButtonClicked(3);
 }
 
 void ULobbyUserWidget::AddMessage(FText const& Message)

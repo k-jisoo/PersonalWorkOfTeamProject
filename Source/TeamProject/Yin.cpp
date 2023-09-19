@@ -10,8 +10,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimBlueprint.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Weapon.h"
+#include "TPGameInstance.h"
 
 AYin::AYin()
 {
@@ -27,7 +29,6 @@ AYin::AYin()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
-	Damage = 10;
 }
 
 void AYin::BeginPlay()
@@ -37,13 +38,30 @@ void AYin::BeginPlay()
 	IsAttacking = false;
 	IsSaveAttack = false;
 	AttackCount = 0;
-	IsInputPossible = false;
+	IsInputPossible = true;
 
 	Weapon = GetWorld()->SpawnActor<AWeapon>(AWeapon::StaticClass(), FVector(0, 0, 0), FRotator::ZeroRotator);
 
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
 
 	Weapon->OwnChar = this;
+
+	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
+
+	if (!GI || !GI->MyCharacter)
+		return;
+
+	UE_LOG(LogTemp, Warning, TEXT("animinstance : %s"), *this->GetMesh()->GetAnimInstance()->GetName());
+
+	GetMesh()->SetSkeletalMesh(GI->MyCharacter->SkeletalMesh);
+	//GetMesh()->SetAnimClass(GI->MyCharacter->AnimBP->StaticClass());
+	GetMesh()->SetAnimInstanceClass(GI->MyCharacter->AnimBP->GetClass());
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Black, GI->MyCharacter->AnimBP->GetClass()->GetName(), true);
+	FirstAttackMontage = GI->MyCharacter->FirstAttackMontage;
+	SecondAttackMontage = GI->MyCharacter->SecondAttackMontage;
+	ThirdAttackMontage = GI->MyCharacter->ThirdAttackMontage;
+	FourthAttackMontage = GI->MyCharacter->FourthAttackMontage;
+	
 }
 
 void AYin::Tick(float DeltaTime)
@@ -69,6 +87,8 @@ void AYin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Started, this, &AYin::Attack);
 	}
 }
+
+
 
 float AYin::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {

@@ -2,8 +2,16 @@
 
 
 #include "TPGameInstance.h"
+#include "Yin.h"
 
 FST_Character* UTPGameInstance::GetCharacterRowData(FName name)
 {
-	return CharacterData->FindRow<FST_Character>(name, TEXT(""));
+	if (!CharacterData)
+		return nullptr;
+	MyCharacter = CharacterData->FindRow<FST_Character>(name, TEXT("")) ? CharacterData->FindRow<FST_Character>(name, TEXT("")) : nullptr;
+
+	UE_LOG(LogTemp, Warning, TEXT("CharacterData's Name: %s"), MyCharacter);
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Black, MyCharacter->AnimBP->GetClass()->GetName(), true);
+	return MyCharacter;
 }

@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Yin.h"
+#include "Engine/DataTable.h"
 #include "TPGameInstance.generated.h"
 
+struct FST_Character;
 /**
  * 
  */
@@ -19,10 +20,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FString Username;
 
+	FST_Character* MyCharacter;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* CharacterData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FST_Character* GetCharacterRowData(FName name);
 
 };
