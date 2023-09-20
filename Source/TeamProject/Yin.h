@@ -27,6 +27,9 @@ public:
 	USkeletalMesh* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimBlueprint* AnimatingRig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimBlueprint* AnimBP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -101,6 +104,8 @@ public:
 	void ResetCombo();
 
 	void SetInputPossible();
+
+	void SetCharacter();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")

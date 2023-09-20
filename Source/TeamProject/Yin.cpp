@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimBlueprint.h"
+#include "Animation/AnimInstance.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Weapon.h"
 #include "TPGameInstance.h"
@@ -29,45 +30,22 @@ AYin::AYin()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	IsAttacking = false;
+	IsSaveAttack = false;
+	AttackCount = 0;
+	IsInputPossible = true;
 }
 
 void AYin::BeginPlay()
 {
 	Super::BeginPlay();
 
-	IsAttacking = false;
-	IsSaveAttack = false;
-	AttackCount = 0;
-	IsInputPossible = true;
-
-	Weapon = GetWorld()->SpawnActor<AWeapon>(AWeapon::StaticClass(), FVector(0, 0, 0), FRotator::ZeroRotator);
-
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
-
-	Weapon->OwnChar = this;
-
-	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
-
-	if (!GI || !GI->MyCharacter)
-		return;
-
-	UE_LOG(LogTemp, Warning, TEXT("animinstance : %s"), *this->GetMesh()->GetAnimInstance()->GetName());
-
-	GetMesh()->SetSkeletalMesh(GI->MyCharacter->SkeletalMesh);
-	//GetMesh()->SetAnimClass(GI->MyCharacter->AnimBP->StaticClass());
-	GetMesh()->SetAnimInstanceClass(GI->MyCharacter->AnimBP->GetClass());
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Black, GI->MyCharacter->AnimBP->GetClass()->GetName(), true);
-	FirstAttackMontage = GI->MyCharacter->FirstAttackMontage;
-	SecondAttackMontage = GI->MyCharacter->SecondAttackMontage;
-	ThirdAttackMontage = GI->MyCharacter->ThirdAttackMontage;
-	FourthAttackMontage = GI->MyCharacter->FourthAttackMontage;
-	
+	SetCharacter();
 }
 
 void AYin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AYin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -200,6 +178,30 @@ void AYin::ResetCombo()
 void AYin::SetInputPossible()
 {
 	IsInputPossible = true;
+}
+
+void AYin::SetCharacter()
+{
+	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
+
+	if (!GI || !GI->MyCharacter) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GI or MyCharacter no"));
+		return;
+	}
+
+	GetMesh()->SetSkeletalMesh(GI->MyCharacter->SkeletalMesh);
+	GetMesh()->SetAnimInstanceClass(GI->MyCharacter->AnimBP->GetAnimBlueprintGeneratedClass());
+	FirstAttackMontage = GI->MyCharacter->FirstAttackMontage;
+	SecondAttackMontage = GI->MyCharacter->SecondAttackMontage;
+	ThirdAttackMontage = GI->MyCharacter->ThirdAttackMontage;
+	FourthAttackMontage = GI->MyCharacter->FourthAttackMontage;
+
+	Weapon = GetWorld()->SpawnActor<AWeapon>(AWeapon::StaticClass(), FVector(0, 0, 0), FRotator::ZeroRotator);
+
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
+
+	Weapon->OwnChar = this;
 }
 
 

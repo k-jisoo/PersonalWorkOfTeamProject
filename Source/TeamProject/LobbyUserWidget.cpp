@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "TPGameInstance.h"
+#include "Yin.h"
 
 void ULobbyUserWidget::NativeConstruct()
 {
@@ -128,8 +129,6 @@ void ULobbyUserWidget::CancelReady()
 
 void ULobbyUserWidget::OnButtonClicked(int num)
 {
-
-
 	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
 	if (!GI)
 		return;
@@ -145,11 +144,23 @@ void ULobbyUserWidget::OnButtonClicked(int num)
 		break;
 
 	case 2:
-		GI->GetCharacterRowData(FName("Temp1"));
+		//GI->GetCharacterRowData(FName("Temp1"));
 		break;
 
 	case 3:
-		GI->GetCharacterRowData(FName("Temp1"));
+		//GI->GetCharacterRowData(FName("Temp1"));
+		break;
+
+	default:
+		if (GetWorld() && GetWorld()->GetFirstPlayerController())
+		{
+			AYin* CurrentPawn = Cast<AYin>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+			if (CurrentPawn)
+			{
+				CurrentPawn->SetCharacter();
+			}
+		}
 		break;
 	}
 }
