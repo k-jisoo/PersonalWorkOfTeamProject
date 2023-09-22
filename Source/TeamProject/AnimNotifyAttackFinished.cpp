@@ -2,12 +2,12 @@
 
 
 #include "AnimNotifyAttackFinished.h"
-#include "Yin.h"
+#include "BaseCharacter.h"
 #include "Weapon.h"
 
 void UAnimNotifyAttackFinished::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	AYin* pChar = Cast<AYin>(MeshComp->GetOwner());
+	ABaseCharacter* pChar = Cast<ABaseCharacter>(MeshComp->GetOwner());
 	if (!IsValid(pChar))
 		return;
 

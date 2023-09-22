@@ -2,10 +2,12 @@
 
 
 #include "Weapon.h"
-#include "Components/SphereComponent.h"
-#include "Yin.h"
+#include "Components/BoxComponent.h"
+#include "BaseCharacter.h"
 #include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -13,12 +15,13 @@ AWeapon::AWeapon()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	Sphere->SetupAttachment(RootComponent);
-	Sphere->SetSphereRadius(90.0f);
-	Sphere->SetCollisionProfileName(TEXT("Custom"));
-	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//AttachToComponent(targetChar->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Sphere"));
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	Box->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	Box->SetCollisionProfileName(TEXT("Custom"));
+	Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	UE_LOG(LogTemp, Warning, TEXT("weaponweapon"));
 }
 
 // Called when the game starts or when spawned
@@ -26,47 +29,74 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OnActorBeginOverlap.AddDynamic(this, &AWeapon::OnSphereComponentBeginOverlap);
+	OnActorBeginOverlap.AddDynamic(this, &AWeapon::OnBoxComponentBeginOverlap);
 }
 
 // Called every frame
 void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AWeapon::SetSphereCollisionState(bool state)
 {
 	if (state)
 	{
-		Sphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 	else
 	{
-		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 
-void AWeapon::SetOwnChar(AYin* Char)
+void AWeapon::SetOwnChar(ABaseCharacter* Char)
 {
 	OwnChar = Char;
 }
 
-void AWeapon::OnSphereComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
-{
-	//Interface로 구현하면 더 좋음
-	//지금은 Yin이지만 Enemy클래스로 바꿔야함.
 
-	AEnemy* HitChar = Cast<AEnemy>(OtherActor);
-	
-	////ApplyDamage로 데미지를 넘기면
-	////상대는 TakeDamage를 override했다면 데미지를 받는다.
-	UGameplayStatics::ApplyDamage(HitChar, OwnChar->Damage, OwnChar->GetController(), this, UDamageType::StaticClass());
-	if (OtherActor == nullptr)
+void AWeapon::OnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (!OtherActor || Cast<ABaseCharacter>(OtherActor))
 		return;
 
-	FString ActorName1 = OtherActor->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("ApplyDamageActor = %s"), *ActorName1);
-}
+	AEnemy* HitChar = Cast<AEnemy>(OtherActor);
 
+	if (!HitChar)
+		return;
+
+	UGameplayStatics::ApplyDamage(HitChar, OwnChar->Damage, OwnChar->GetController(), OwnChar, UDamageType::StaticClass());
+
+	TArray<FHitResult> HitResults;
+	FVector StartLocation = OwnChar->GetActorLocation();
+	FVector EndLocation = OtherActor->GetActorLocation();
+
+	FCollisionObjectQueryParams collisionObjectQuery;
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_Vehicle);
+	collisionObjectQuery.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(OwnChar);
+	CollisionParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceMultiByObjectType(HitResults, StartLocation, EndLocation, collisionObjectQuery, CollisionParams);
+
+	if (!bHit)
+		return;
+
+	for (int i = 0; i < HitResults.Num(); i++)
+	{
+		FVector ParticlePoint = HitResults[i].ImpactPoint;
+		FVector HitNormal = HitResults[i].ImpactNormal;
+		FRotator Rotation = HitNormal.Rotation();
+
+		if (!(OwnChar->HitParticle))
+			return;
+		UParticleSystemComponent* ParticleSystemComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OwnChar->HitParticle, ParticlePoint, Rotation, true);
+	}
+}

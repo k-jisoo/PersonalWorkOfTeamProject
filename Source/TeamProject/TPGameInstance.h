@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Engine/DataTable.h"
 #include "TPGameInstance.generated.h"
 
 struct FST_Character;
@@ -23,7 +22,7 @@ public:
 	FST_Character* MyCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UDataTable* CharacterData;
+	class UDataTable* CharacterData;
 
 	FST_Character* GetCharacterRowData(FName name);
 

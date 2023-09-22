@@ -40,10 +40,7 @@ public:
 	class UButton* TerraButton;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UButton* Temp1Button;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UButton* Temp2Button;
+	class UButton* RelevantButton;
 
 
 	UFUNCTION()
@@ -71,10 +68,8 @@ public:
 	void OnTerraButtonClicked();
 
 	UFUNCTION()
-	void OnTemp1ButtonClicked();
+	void OnRevenantButtonClicked();
 
-	UFUNCTION()
-	void OnTemp2ButtonClicked();
 
 	void AddMessage(FText const& Message);
 

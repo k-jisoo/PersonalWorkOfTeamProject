@@ -31,7 +31,6 @@ void ALobbyPlayerController::BeginPlay()
 
 bool ALobbyPlayerController::C2S_SendMessage_Validate(FText const& Message)
 {
-    //메세지 검증
     return true;
 }
 

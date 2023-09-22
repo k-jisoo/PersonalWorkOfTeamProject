@@ -11,7 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "TPGameInstance.h"
-#include "Yin.h"
+#include "BaseCharacter.h"
 
 void ULobbyUserWidget::NativeConstruct()
 {
@@ -58,19 +58,17 @@ void ULobbyUserWidget::NativeConstruct()
 
 	YinButton = Cast<UButton>(GetWidgetFromName(TEXT("Yin")));
 	TerraButton = Cast<UButton>(GetWidgetFromName(TEXT("Terra")));
-	Temp1Button = Cast<UButton>(GetWidgetFromName(TEXT("Temp1")));
-	Temp2Button = Cast<UButton>(GetWidgetFromName(TEXT("Temp2")));
+	RelevantButton = Cast<UButton>(GetWidgetFromName(TEXT("Relevant")));
 
 
-	if (!YinButton || !TerraButton || !Temp1Button || !Temp2Button)
+	if (!YinButton || !TerraButton || !RelevantButton)
 	{
 		return;
 	}
 
 	YinButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnYinButtonClicked);
 	TerraButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTerraButtonClicked); 
-	Temp1Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTemp1ButtonClicked);
-	Temp2Button->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnTemp2ButtonClicked);
+	RelevantButton->OnClicked.AddDynamic(this, &ULobbyUserWidget::OnRevenantButtonClicked);
 		
 }
 
@@ -129,38 +127,39 @@ void ULobbyUserWidget::CancelReady()
 
 void ULobbyUserWidget::OnButtonClicked(int num)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnButtonClicked"));
+
 	UTPGameInstance* GI = Cast<UTPGameInstance>(GetWorld()->GetGameInstance());
+
 	if (!GI)
+		return;
+		
+	if (!GetWorld() || !(GetWorld()->GetFirstPlayerController()))
+		return;
+
+	ABaseCharacter* CurrentPawn = Cast<ABaseCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	if (!CurrentPawn)
 		return;
 
 	switch (num)
 	{
 	case 0:
 		GI->GetCharacterRowData(FName("Yin"));
+		CurrentPawn->SetCharacter();
+		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 
 	case 1:
 		GI->GetCharacterRowData(FName("Terra"));
+		CurrentPawn->SetCharacter();
+		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 
 	case 2:
-		//GI->GetCharacterRowData(FName("Temp1"));
-		break;
-
-	case 3:
-		//GI->GetCharacterRowData(FName("Temp1"));
-		break;
-
-	default:
-		if (GetWorld() && GetWorld()->GetFirstPlayerController())
-		{
-			AYin* CurrentPawn = Cast<AYin>(GetWorld()->GetFirstPlayerController()->GetPawn());
-
-			if (CurrentPawn)
-			{
-				CurrentPawn->SetCharacter();
-			}
-		}
+		GI->GetCharacterRowData(FName("Revenant"));
+		CurrentPawn->SetCharacter();
+		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 	}
 }
@@ -175,15 +174,11 @@ void ULobbyUserWidget::OnTerraButtonClicked()
 	OnButtonClicked(1);
 }
 
-void ULobbyUserWidget::OnTemp1ButtonClicked()
+void ULobbyUserWidget::OnRevenantButtonClicked()
 {
 	OnButtonClicked(2);
 }
 
-void ULobbyUserWidget::OnTemp2ButtonClicked()
-{
-	OnButtonClicked(3);
-}
 
 void ULobbyUserWidget::AddMessage(FText const& Message)
 {

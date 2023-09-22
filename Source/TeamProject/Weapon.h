@@ -4,10 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Yin.h"
 #include "Weapon.generated.h"
-
-class USphereComponent;
 
 UCLASS()
 class TEAMPROJECT_API AWeapon : public AActor
@@ -29,16 +26,21 @@ public:
 public:
 	void SetSphereCollisionState(bool state);
 
-	void SetOwnChar(AYin* Char);
+	void SetOwnChar(class ABaseCharacter* Char);
+
 
 public:
 	UFUNCTION()
-	void OnSphereComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	void OnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
-	USphereComponent* Sphere;
+	class UBoxComponent* Box;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	UStaticMeshComponent* Cube;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character")
-	AYin* OwnChar;
+	class ABaseCharacter* OwnChar;
+
 };
