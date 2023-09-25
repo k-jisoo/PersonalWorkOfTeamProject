@@ -109,9 +109,26 @@ public:
 
 	void SetInputPossible();
 
-	void SetCharacter();
+	UFUNCTION(Server, Reliable)
+	void ReqSetLobbyCharacter(USkeletalMesh* SkeletalMesh, UAnimBlueprint* AnimBP);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetLobbyCharacter(USkeletalMesh* SkeletalMesh, UAnimBlueprint* AnimBP);
+
+	UFUNCTION(Server, Reliable)
+	void ReqSetCharacter(USkeletalMesh* skeletalMesh, UAnimBlueprint* animBp, UAnimMontage* firstAttackMontage, UAnimMontage* secondAttackMontage, UAnimMontage* thirdAttackMontage, UAnimMontage* fourthAttackMontage, UAnimMontage* levelStartMontage, float maxHp, float damage, float speed, float capsuleHeight, float capsuleRadius, FVector boxCollisionExt, UParticleSystem* hitParticle);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void RecSetCharacter(USkeletalMesh* skeletalMesh, UAnimBlueprint* animBp, UAnimMontage* firstAttackMontage, UAnimMontage* secondAttackMontage, UAnimMontage* thirdAttackMontage, UAnimMontage* fourthAttackMontage, UAnimMontage* levelStartMontage, float maxHp, float damage, float speed, float capsuleHeight, float capsuleRadius, FVector boxCollisionExt, UParticleSystem* hitParticle);
+
 
 	void SetWeapon();
+
+	UFUNCTION(Server, Reliable)
+	void ReqPlayAnimMontage(UAnimMontage* animMontage);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void ClientPlayAnimMontage(UAnimMontage* animMontage);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
@@ -155,6 +172,7 @@ public:
 
 	FST_Character* ST_Character;
 
+	FTimerHandle MyTimerHandle;
 public:
 	bool IsAttacking;
 	bool IsSaveAttack;

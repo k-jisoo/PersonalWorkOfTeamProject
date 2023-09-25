@@ -20,8 +20,6 @@ AWeapon::AWeapon()
 	Box->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	Box->SetCollisionProfileName(TEXT("Custom"));
 	Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	UE_LOG(LogTemp, Warning, TEXT("weaponweapon"));
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +27,7 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OnActorBeginOverlap.AddDynamic(this, &AWeapon::OnBoxComponentBeginOverlap);
+	OnActorBeginOverlap.AddDynamic(this, &AWeapon::ReqOnBoxComponentBeginOverlap);
 }
 
 // Called every frame
@@ -55,8 +53,13 @@ void AWeapon::SetOwnChar(ABaseCharacter* Char)
 	OwnChar = Char;
 }
 
+void AWeapon::ReqOnBoxComponentBeginOverlap_Implementation(AActor* OverlappedActor, AActor* OtherActor)
+{
+	RecOnBoxComponentBeginOverlap(OverlappedActor, OtherActor);
+}
 
-void AWeapon::OnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+
+void AWeapon::RecOnBoxComponentBeginOverlap_Implementation(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (!OtherActor || Cast<ABaseCharacter>(OtherActor))
 		return;

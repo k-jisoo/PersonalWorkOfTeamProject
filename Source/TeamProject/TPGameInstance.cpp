@@ -5,12 +5,15 @@
 #include "BaseCharacter.h"
 #include "Engine/DataTable.h"
 
-FST_Character* UTPGameInstance::GetCharacterRowData(FName name)
+void UTPGameInstance::ReqGetCharacterRowData_Implementation(FName name)
+{
+	GetCharacterRowData(name);
+}
+
+void UTPGameInstance::GetCharacterRowData(FName name)
 {
 	if (!CharacterData)
-		return nullptr;
+		return;
 
 	MyCharacter = CharacterData->FindRow<FST_Character>(name, TEXT("")) ? CharacterData->FindRow<FST_Character>(name, TEXT("")) : nullptr;
-
-	return MyCharacter;
 }

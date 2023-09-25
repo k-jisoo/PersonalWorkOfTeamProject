@@ -30,8 +30,11 @@ public:
 
 
 public:
-	UFUNCTION()
-	void OnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	UFUNCTION(Server, Reliable)
+	void ReqOnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void RecOnBoxComponentBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")

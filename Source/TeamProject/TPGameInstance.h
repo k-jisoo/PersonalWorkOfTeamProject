@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDataTable* CharacterData;
 
-	FST_Character* GetCharacterRowData(FName name);
+	UFUNCTION(Server, Reliable)
+	void ReqGetCharacterRowData(FName name);
+
+	void GetCharacterRowData(FName name);
 
 };

@@ -145,21 +145,21 @@ void ULobbyUserWidget::OnButtonClicked(int num)
 	switch (num)
 	{
 	case 0:
-		GI->GetCharacterRowData(FName("Yin"));
-		CurrentPawn->SetCharacter();
-		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
+		GI->ReqGetCharacterRowData(FName("Yin"));
+		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
+		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
 		break;
 
 	case 1:
-		GI->GetCharacterRowData(FName("Terra"));
-		CurrentPawn->SetCharacter();
-		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
+		GI->ReqGetCharacterRowData(FName("Terra"));
+		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
+		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
 		break;
 
 	case 2:
-		GI->GetCharacterRowData(FName("Revenant"));
-		CurrentPawn->SetCharacter();
-		CurrentPawn->PlayAnimMontage(CurrentPawn->LevelStartMontage);
+		GI->ReqGetCharacterRowData(FName("Revenant"));
+		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
+		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
 		break;
 	}
 }
