@@ -19,6 +19,7 @@
 #include "Weapon.h"
 #include "TPGameInstance.h"
 #include "Particles/ParticleSystem.h"
+#include "MainPlayerController.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -51,12 +52,20 @@ void ABaseCharacter::BeginPlay()
 	if (!(GI->MyCharacter))
 		return;
 
-	ReqSetCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP, GI->MyCharacter->FirstAttackMontage, GI->MyCharacter->SecondAttackMontage, GI->MyCharacter->ThirdAttackMontage, GI->MyCharacter->FourthAttackMontage, GI->MyCharacter->LevelStartMontage, GI->MyCharacter->MaxHp, GI->MyCharacter->Damage, GI->MyCharacter->Speed, GI->MyCharacter->CapsuleHeight, GI->MyCharacter->CapsuleRadius,  GI->MyCharacter->BoxCollisionExt, GI->MyCharacter->HitParticle);
+	AMainPlayerController* PC = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	if (!PC)
+		return;
+
+	//ABaseCharacter* CurrentPawn = Cast<ABaseCharacter>(PC->GetPawn());
+
+	//if (!CurrentPawn)
+	//	return;
+
+	ReqSetCharacter();
+
 
 	SetWeapon();
-
-	UE_LOG(LogTemp, Warning, TEXT("WorldName : %s, name : %s, %f, %f, %f, %f"), *GetWorld()->GetName(), *GI->MyCharacter->SkeletalMesh->GetName(), MaxHp, Damage, GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), GetCapsuleComponent()->GetScaledCapsuleRadius());
-
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
@@ -200,52 +209,22 @@ void ABaseCharacter::SetInputPossible()
 	IsInputPossible = true;
 }
 
-void ABaseCharacter::ReqSetLobbyCharacter_Implementation(USkeletalMesh* SkeletalMesh, UAnimBlueprint* AnimBP)
+void ABaseCharacter::ReqSetCharacter_Implementation()
 {
-	SetLobbyCharacter(SkeletalMesh, AnimBP);
+	RecSetCharacter();
 }
 
-void ABaseCharacter::SetLobbyCharacter_Implementation(USkeletalMesh* SkeletalMesh, UAnimBlueprint* AnimBP)
+void ABaseCharacter::RecSetCharacter_Implementation()
 {
-	GetMesh()->SetSkeletalMesh(SkeletalMesh);
-	GetMesh()->SetAnimInstanceClass(AnimBP->GetAnimBlueprintGeneratedClass());
-}
+	UTPGameInstance* GI = Cast<UTPGameInstance>(GetGameInstance());
 
-void ABaseCharacter::ReqSetCharacter_Implementation(USkeletalMesh* skeletalMesh, UAnimBlueprint* animBp, UAnimMontage* firstAttackMontage, UAnimMontage* secondAttackMontage, UAnimMontage* thirdAttackMontage, UAnimMontage* fourthAttackMontage, UAnimMontage* levelStartMontage, float maxHp, float damage, float speed, float capsuleHeight, float capsuleRadius, FVector boxCollisionExt, UParticleSystem* hitParticle)
-{
-	RecSetCharacter(skeletalMesh, animBp, firstAttackMontage, secondAttackMontage, thirdAttackMontage, fourthAttackMontage, levelStartMontage, maxHp, damage, speed, capsuleHeight, capsuleRadius, boxCollisionExt, hitParticle);
-}
-
-void ABaseCharacter::RecSetCharacter_Implementation(USkeletalMesh* skeletalMesh, UAnimBlueprint* animBp, UAnimMontage* firstAttackMontage, UAnimMontage* secondAttackMontage, UAnimMontage* thirdAttackMontage, UAnimMontage* fourthAttackMontage, UAnimMontage* levelStartMontage, float maxHp, float damage, float speed, float capsuleHeight, float capsuleRadius, FVector boxCollisionExt, UParticleSystem* hitParticle)
-{
-	GetMesh()->SetSkeletalMesh(skeletalMesh);
-	GetMesh()->SetAnimInstanceClass(animBp->GetAnimBlueprintGeneratedClass());
-	GetMesh()->SetRelativeLocation(FVector(0, 0, capsuleHeight * -1));
-
-	this->FirstAttackMontage = firstAttackMontage;
-	this->SecondAttackMontage = secondAttackMontage;
-	this->ThirdAttackMontage = thirdAttackMontage;
-	this->FourthAttackMontage = fourthAttackMontage;
-	this->LevelStartMontage = levelStartMontage;
-	this->MaxHp = maxHp;
-	this->Damage = damage;
-	this->HitParticle = hitParticle;
-	CurHp = maxHp;
-
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	if (!CapsuleComp)
+	if (!GI || !(GI->MyCharacter->CharacterBp))
 		return;
 
-	CapsuleComp->SetCapsuleHalfHeight(capsuleHeight);
-	CapsuleComp->SetCapsuleRadius(capsuleRadius);
-
-
-	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
-
-	if (!CharacterMovementComponent)
+	ABaseCharacter* Yin = Cast<ABaseCharacter>(GI->MyCharacter->CharacterBp);
+	if (!Yin)
 		return;
-
-	CharacterMovementComponent->MaxWalkSpeed = speed;
+	GetWorld()->GetFirstPlayerController()->SetPawn(Yin);
 }
 
 void ABaseCharacter::SetWeapon()
@@ -258,8 +237,7 @@ void ABaseCharacter::SetWeapon()
 	Weapon = GetWorld()->SpawnActor<AWeapon>(AWeapon::StaticClass(), FVector(0, 0, 0), FRotator::ZeroRotator);
 
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("weaponCollision"));
-
-	FVector Ext = GI->MyCharacter->BoxCollisionExt;
+	FVector Ext = this->BoxCollisionExt;
 	Weapon->Box->SetBoxExtent(Ext);
 	Weapon->Box->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	Weapon->Box->SetRelativeLocation(FVector(0.0f, Ext.X, 0.0f));

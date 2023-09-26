@@ -133,9 +133,6 @@ void ULobbyUserWidget::OnButtonClicked(int num)
 
 	if (!GI)
 		return;
-		
-	if (!GetWorld() || !(GetWorld()->GetFirstPlayerController()))
-		return;
 
 	ABaseCharacter* CurrentPawn = Cast<ABaseCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
@@ -146,20 +143,20 @@ void ULobbyUserWidget::OnButtonClicked(int num)
 	{
 	case 0:
 		GI->ReqGetCharacterRowData(FName("Yin"));
-		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
-		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
+		CurrentPawn->ReqSetCharacter();
+		CurrentPawn->ReqPlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 
 	case 1:
 		GI->ReqGetCharacterRowData(FName("Terra"));
-		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
-		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
+		CurrentPawn->ReqSetCharacter();
+		CurrentPawn->ReqPlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 
 	case 2:
 		GI->ReqGetCharacterRowData(FName("Revenant"));
-		CurrentPawn->ReqSetLobbyCharacter(GI->MyCharacter->SkeletalMesh, GI->MyCharacter->AnimBP);
-		CurrentPawn->ReqPlayAnimMontage(GI->MyCharacter->LevelStartMontage);
+		CurrentPawn->ReqSetCharacter();
+		CurrentPawn->ReqPlayAnimMontage(CurrentPawn->LevelStartMontage);
 		break;
 	}
 }

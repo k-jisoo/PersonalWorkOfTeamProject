@@ -10,10 +10,12 @@ void UTPGameInstance::ReqGetCharacterRowData_Implementation(FName name)
 	GetCharacterRowData(name);
 }
 
-void UTPGameInstance::GetCharacterRowData(FName name)
+void UTPGameInstance::GetCharacterRowData_Implementation(FName name)
 {
 	if (!CharacterData)
 		return;
 
 	MyCharacter = CharacterData->FindRow<FST_Character>(name, TEXT("")) ? CharacterData->FindRow<FST_Character>(name, TEXT("")) : nullptr;
+
+	CharName = name;
 }

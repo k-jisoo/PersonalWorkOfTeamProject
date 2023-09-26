@@ -19,6 +19,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FString Username;
 
+	FName CharName;
+
 	FST_Character* MyCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -27,6 +29,11 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ReqGetCharacterRowData(FName name);
 
+	void ReqGetCharacterRowData_Implementation(FName name);
+
+	UFUNCTION(NetMulticast, Reliable)
 	void GetCharacterRowData(FName name);
+
+	void GetCharacterRowData_Implementation(FName name);
 
 };
